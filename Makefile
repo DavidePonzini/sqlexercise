@@ -12,10 +12,16 @@ else
 	VENV_BIN=$(VENV)/bin
 endif
 
-.PHONY: install build uninstall documentation upload download clean
+.PHONY: install install_local_libs build uninstall documentation upload download clean
 
 install: uninstall build
 	$(VENV_BIN)/python -m pip install ./dist/*.whl
+
+install_local_libs: $(VENV)
+	$(MAKE) -C ../lensql_sqlscope build
+	$(VENV_BIN)/python -m pip install ../lensql_sqlscope/dist/sqlscope-*.whl --force-reinstall --no-deps
+	$(MAKE) -C ../lensql_sqlerrors build
+	$(VENV_BIN)/python -m pip install ../lensql_sqlerrors/dist/sqlerrors-*.whl --force-reinstall --no-deps
 
 $(VENV):
 	python -m venv --clear $(VENV)
